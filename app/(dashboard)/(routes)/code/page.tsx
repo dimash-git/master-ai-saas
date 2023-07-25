@@ -18,10 +18,12 @@ import { ChatCompletionRequestMessage } from "openai";
 import { Empty } from "@/components/Empty";
 import Loader from "@/components/Loader";
 import { cn } from "@/lib/utils";
-import UserAvatar from "@/components/UserAvatar";
-import BotAvatar from "@/components/BotAvatar";
+import UserAvatar from "@/components/Avatar/UserAvatar";
+import BotAvatar from "@/components/Avatar/BotAvatar";
 
 import ReactMarkdown from "react-markdown";
+import useModalStore from "@/store/ModalStore";
+import { useToast } from "@/components/ui/use-toast";
 
 const CodePage = () => {
   const router = useRouter();
@@ -34,6 +36,9 @@ const CodePage = () => {
   });
 
   const isLoading = form.formState.isSubmitting;
+
+  const proModal = useModalStore();
+  const { toast } = useToast();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -49,8 +54,15 @@ const CodePage = () => {
 
       setMessages((current) => [...current, userMessage, response.data]);
     } catch (error: any) {
-      console.log(error);
-      //   TODO Open Pro Modal
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: `${error}`,
+        });
+      }
     } finally {
       router.refresh();
     }

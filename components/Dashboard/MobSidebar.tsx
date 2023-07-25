@@ -1,13 +1,17 @@
 "use client";
 
-import { Button } from "./ui/button";
-import Sidebar from "./Sidebar";
-
-import { Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useEffect, useState } from "react";
 
-const MobSidebar = () => {
+import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import Sidebar from "./Sidebar";
+
+interface MobSidebarProps {
+  limit: number;
+  isPro: boolean;
+}
+
+const MobSidebar = ({ limit = 0, isPro = false }: MobSidebarProps) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -31,7 +35,7 @@ const MobSidebar = () => {
         </span>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <Sidebar />
+        <Sidebar limit={limit} isPro={isPro} />
       </SheetContent>
     </Sheet>
   );
